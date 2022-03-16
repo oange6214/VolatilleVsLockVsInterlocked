@@ -14,6 +14,7 @@
         <local:BasicsDataContent/>
     </Window.DataContext>
 
+    
     <!--Source 指定靜態資源-->
     <Window.Resources>
         <local:BasicsDataContent x:Key="basicsDataContent"/>

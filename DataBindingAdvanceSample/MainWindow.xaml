@@ -1,0 +1,65 @@
+﻿<Window x:Class="DataBindingAdvanceSample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataBindingAdvanceSample"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="400" Width="400">
+
+    <Window.DataContext>
+        <local:MyDataContext/>
+    </Window.DataContext>
+
+
+    <Grid>
+        <!--
+    資料綁定的擴充標記
+    Binding 語法是擴充標記的一種，這種是為了簡化 XAML 語法
+    -->
+
+        <!-- 1) Binding.Path
+    用來設定綁定來源的屬性路徑，使用擴充標記時，預設的參數即為 Path，
+    因此 {Binding Property} 與 {Binding Path=Property} 等效。
+    
+    Path 支持巢狀屬性（綁定屬性中的屬性）ex. {Binding Path=Property.InnerProperty}
+    -->
+        <StackPanel>
+            <Slider x:Name="slider" Value="{Binding MyClass.MyValue}"/>
+        </StackPanel>
+
+        <!--2) Binding.Mode
+    用來設定資料綁定的模式，共有五種模式：
+    OneWay：單向綁定，只有 DataContext 屬性會同步到控件屬性。
+    OneWayToSource：單向綁定，只有控件屬性會同步到 DataContext 屬性。
+    TwoWay：雙向綁定，控件屬性與 DataContext 屬性完全同步。
+    OneTime：單次綁定，屬性指會同步一次，之後就解除綁定。
+    Default：使用預設的模式。根據空間的不同，預設的模式也不同。
+        由使用者操控的控件屬性（Slider.Value, TextBox.Text 之類），預設是 TwoWay。
+        其他的屬性預設皆為 OneWay。
+    -->
+
+        <!--3) Source, ElementName, RelativeSource-->
+
+        <!--4) UpdateSourceTrigger
+    用來調整更新資料來源的時機。當 Mode 使用 OneWayToSource 或 TwoWay 時，
+    使用者操作控件會更新 DataContext 中的屬性值，
+    不同的更新時機會產生不同的效果。共有四種更新時機：
+    1. LostFocus：當控件失去焦點時
+    2. PropertyChanged：當屬性改變時
+    3. Explicit：只有在代碼中明確使用 Binding.UpdateSource() 時才會更新
+    4. Default：使用預設的更新。
+        除了 TextBox.Text 是 LostFocus，其他控件屬性都是 PropertyChanged
+    -->
+
+        <!--5) FallbackValue
+    資料綁定有可能因為各種情況失效，例如：Binding 語法錯誤、找不到資料來源、Path 寫錯等等。
+    因此，Binding.FallbackValue 提供了在綁定失效時要顯示的值，
+    方便快速查覺資料綁定失效了。
+    -->
+
+        <StackPanel>
+            <TextBox Text="{Binding ElementName=aa, Path=aa, FallbackValue=Failed!}"/>
+        </StackPanel>
+    </Grid>
+</Window>
