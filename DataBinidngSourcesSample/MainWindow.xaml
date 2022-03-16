@@ -1,0 +1,108 @@
+﻿<Window x:Class="DataBinidngSourcesSample.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DataBinidngSourcesSample"
+        xmlns:collection="clr-namespace:System.Collections;assembly=mscorlib"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+
+    <!--控件 DataContext，推薦使用-->
+    <Window.DataContext>
+        <local:BasicsDataContent/>
+    </Window.DataContext>
+
+    <!--Source 指定靜態資源-->
+    <Window.Resources>
+        <local:BasicsDataContent x:Key="basicsDataContent"/>
+
+        <collection:ArrayList x:Key="cillectionkey">
+            <sys:String>1</sys:String>
+            <sys:String>2</sys:String>
+            <sys:String>3</sys:String>
+            <sys:String>4</sys:String>
+        </collection:ArrayList>
+    </Window.Resources>
+    
+    <StackPanel Background="Green">
+        <Slider x:Name="slider1" Value="{Binding Value}"/>
+        <TextBlock Text="{Binding ElementName=slider1, Path=Value}"/>
+        
+        <Slider x:Name="slider2" Value="{Binding Source={StaticResource basicsDataContent}, Path=Number}"/>
+        <TextBlock Text="{Binding ElementName=slider2, Path=Value}"/>
+
+        
+        <!--FindAncestor 綁定某控件的父控件-->
+        <Button Foreground="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=StackPanel, AncestorLevel=1}, Path=Background}"
+                Content="Button"/>
+
+        <!--不使用 擴充標記-->
+        <Button Content="Button2">
+            <Button.Foreground>
+                <Binding Path="Background">
+                    <Binding.RelativeSource>
+                        <RelativeSource Mode="FindAncestor"
+                                        AncestorType="StackPanel"
+                                        AncestorLevel="1"/>
+                    </Binding.RelativeSource>
+                </Binding>
+            </Button.Foreground>
+        </Button>
+        
+        <!--Self 綁定到控件本身的其他屬性-->
+        <Button Width="50" Content="Button3"
+                Height="{Binding RelativeSource={RelativeSource Mode=Self}, Path=Width}"/>
+        
+        <!--TemplatedParent 讓模板內的子控件屬性綁定到控件本身的屬性-->
+        <Button Content="Button4" Margin="5" Height="40">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Rectangle RadiusX="5"
+                                   RadiusY="5"
+                                   Fill="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Background}"
+                                   Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Width}"
+                                   Height="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=Height}"/>
+                        <ContentPresenter HorizontalAlignment="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=HorizontalContentAlignment}"
+                                          VerticalAlignment="{Binding RelativeSource={RelativeSource Mode=TemplatedParent}, Path=VerticalContentAlignment}"
+                                          Margin="3"/>
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        
+        <!--TemplatedParent 擴充標記-->
+        <!--專門給 Template Binding，只支援單項綁定（從控件同步給模板）-->
+        <Button Content="Button5" Margin="5" Height="40">
+            <Button.Template>
+                <ControlTemplate TargetType="Button">
+                    <Grid>
+                        <Rectangle RadiusX="5"
+                                   RadiusY="5"
+                                   Fill="{TemplateBinding Background}"
+                                   Width="{TemplateBinding Width}"
+                                   Height="{TemplateBinding Height}"/>
+                        <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                          Margin="3"/>
+                    </Grid>
+                </ControlTemplate>
+            </Button.Template>
+        </Button>
+        
+        <!--PreviousData 在 ListBox 中把 ItemSource 綁定到一組資料後，想要一併綁定到「前一組」資料-->
+        <ListBox ItemsSource="{StaticResource ResourceKey=cillectionkey}">
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="{Binding }"/>
+                        <TextBlock Text="{Binding RelativeSource={RelativeSource Mode=PreviousData}}"
+                                   Margin="15 0"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+        </ListBox>
+    </StackPanel>
+</Window>
